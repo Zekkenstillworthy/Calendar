@@ -5,232 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Light Pink Calendar & Photo Gallery</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --viewport-h: 100vh;
-            --viewport-w: 100vw;
-            --photo-size: clamp(180px, min(70vh, 55vmin), 900px);
-
-            --marquee-photo-size: clamp(
-                120px,
-                calc((var(--viewport-h) - 120px) / 2),
-                min(44vmin, 560px)
-            );
-
-            /* Adaptive animation speed: slower on wider screens, faster on narrower ones */
-            --marquee-speed: clamp(35s, calc(25s + 40vw), 75s);
-
-            --calendar-day-font-size: clamp(18px, min(4.2vmin, 4.8vh), 38px);
-        }
-
-        /* Prefer modern viewport units when supported (fixes mobile address-bar issues) */
-        @supports (height: 100svh) {
-            :root { --viewport-h: 100svh; }
-        }
-
-        @supports (height: 100dvh) {
-            :root { --viewport-h: 100dvh; }
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
             min-height: 100vh;
-            padding: 0;
-            position: relative;
             overflow-x: hidden;
         }
 
-        /* Marquee Banner */
+        /* ===== 1. MARQUEE BANNER (Very Top) ===== */
         .marquee-banner {
             background-color: #f06292;
             color: white;
-            padding: 12px 0;
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
+            padding: 10px 0;
             font-weight: 600;
             font-size: 14px;
+            border-bottom: 2px solid #e91e63;
         }
 
-        .marquee-track {
-            display: flex;
-            width: max-content;
-            will-change: transform;
-            animation: marquee-loop 28s linear infinite;
+        .marquee-banner marquee {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
 
-        .marquee-item {
-            flex-shrink: 0;
-            padding-right: 32px;
-        }
-
-        @keyframes marquee-loop {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-50%, 0, 0); }
-        }
-
-        /* Main Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            position: relative;
-            z-index: 1;
-            width: 100%;
-        }
-
-        /* Section Styling */
-        .section {
-            background-color: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(233, 30, 99, 0.15);
-            border: 2px solid #f48fb1;
-        }
-
-        .calendar-section {
-            margin-top: clamp(200px, 60vh, 1000px);
-        }
-
-        .section-title {
-            color: #e91e63;
-            font-size: 20px;
-            font-weight: 700;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        /* ===== PHOTO GALLERY SECTION ===== */
-        .photo-gallery {
-            display: grid;
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        /* Photo Marquee */
-        .photo-marquee {
-            overflow: hidden;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            width: 100vw;
-            height: var(--viewport-h);
+        /* ===== 2. PHOTO GALLERY (Second — horizontal scrolling marquee) ===== */
+        .photo-marquee-section {
             background-color: #f48fb1;
-            border-radius: 0;
+            overflow: hidden;
+            height: 55vh;
             display: flex;
-            align-items: flex-end;
-            padding-left: clamp(8px, 2vmin, 16px);
-            padding-right: clamp(8px, 2vmin, 16px);
-            padding-top: clamp(4px, 1.2vmin, 10px);
-            padding-bottom: clamp(12px, 3vmin, 22px);
-            margin: 0;
-            z-index: 0;
-            pointer-events: none;
+            align-items: center;
+            border-bottom: 3px solid #e91e63;
         }
 
         .photo-marquee-track {
             display: flex;
-            gap: clamp(8px, 1.5vmin, 18px);
-            padding: 0;
+            gap: 12px;
+            padding: 12px;
             width: max-content;
-            align-items: center;
-            animation-name: scroll-photos;
-            animation-duration: 50s;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
+            animation: scroll-photos 50s linear infinite;
             will-change: transform;
+            align-items: center;
         }
 
         @keyframes scroll-photos {
-            0% {
-                transform: translate3d(0, 0, 0);
-            }
-            100% {
-                transform: translate3d(-50%, 0, 0);
-            }
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
         }
 
         .photo-pair {
             display: flex;
             flex-direction: column;
-            gap: clamp(6px, 1.4vmin, 16px);
+            gap: 10px;
             flex-shrink: 0;
-            align-items: center;
-        }
-
-        .photo-grid {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 15px;
-        }
-
-        /* Grid layout variants */
-        .photo-grid.grid-1 {
-            grid-template-columns: 1fr;
-        }
-
-        .photo-grid.grid-2 {
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .photo-grid.grid-3-4 {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: auto auto;
-        }
-
-        .photo-grid.grid-5-6 {
-            grid-template-columns: 1fr 1fr 1fr;
-            grid-template-rows: auto auto;
-        }
-
-        .photo-grid.grid-7-9 {
-            grid-template-columns: 1fr 1fr 1fr;
-        }
-
-        .photo-grid.grid-10 {
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: repeat(5, 1fr);
         }
 
         .photo-item {
-            aspect-ratio: 1;
-            border: 3px solid #f48fb1;
+            width: clamp(140px, 22vh, 280px);
+            height: clamp(140px, 22vh, 280px);
+            border: 3px solid #fff;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #fce4ec;
             overflow: hidden;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            min-width: var(--photo-size);
-            width: var(--photo-size);
-            height: var(--photo-size);
-        }
-
-        .photo-marquee-track .photo-item {
+            background-color: #fce4ec;
             flex-shrink: 0;
-            min-width: var(--marquee-photo-size);
-            width: var(--marquee-photo-size);
-            height: var(--marquee-photo-size);
-        }
-
-        .photo-marquee-track img {
-            opacity: 0.92;
-        }
-
-        .photo-item:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.25);
         }
 
         .photo-item img {
@@ -238,183 +78,45 @@
             height: 100%;
             object-fit: cover;
             display: block;
+            opacity: 0.92;
         }
 
-        .photo-placeholder {
+        /* ===== 3. MUSIC PLAYER (Third — centered pill) ===== */
+        .music-player-bar {
+            background: rgba(255, 255, 255, 0.95);
+            border-top: 2px solid #f8bbd0;
+            border-bottom: 2px solid #f8bbd0;
+            padding: 12px 20px;
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            color: #f06292;
-            font-weight: 600;
-            text-align: center;
-        }
-
-        .photo-placeholder-icon {
-            font-size: 32px;
-        }
-
-        .gallery-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 14px;
-        }
-
-        .btn-add-photo {
-            background-color: #f48fb1;
-            color: white;
-        }
-
-        .btn-add-photo:hover {
-            background-color: #f06292;
-        }
-
-        .btn-add-photo:disabled {
-            background-color: #e8b4cc;
-            cursor: not-allowed;
-        }
-
-        .btn-remove {
-            background-color: #f06292;
-            color: white;
-        }
-
-        .btn-remove:hover {
-            background-color: #e91e63;
-        }
-
-        .btn-remove:disabled {
-            background-color: #e8b4cc;
-            cursor: not-allowed;
-        }
-
-        #photoInput {
-            display: none;
-        }
-
-        .photo-count {
-            text-align: center;
-            color: #e91e63;
-            font-weight: 600;
-            margin-top: 10px;
-        }
-
-        /* ===== MUSIC PLAYER SECTION ===== */
-        .music-player-section {
-            display: grid;
-            gap: 15px;
-        }
-
-        .music-float-pill {
-            position: fixed;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            width: min(760px, calc(100vw - 24px));
-            max-height: calc(var(--viewport-h) - 24px);
-            overflow: hidden;
-            background-color: rgba(255, 255, 255, 0.92);
-            border: 2px solid #f48fb1;
-            border-radius: 9999px;
-            box-shadow: 0 10px 30px rgba(233, 30, 99, 0.18);
-            padding: 12px 16px;
-            z-index: 5;
-        }
-
-        .music-float-pill .player-controls {
-            flex-wrap: nowrap;
-        }
-
-        .music-float-pill .progress-container {
-            width: min(520px, 56vw);
-        }
-
-        .music-section {
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            padding: 0;
-            margin-bottom: 0;
-        }
-
-        .music-section .section-title {
-            display: none;
-        }
-
-        .music-upload {
-            display: flex;
-            gap: 10px;
             align-items: center;
             justify-content: center;
-        }
-
-        #musicInput {
-            display: none;
-        }
-
-        .btn-upload-music {
-            background-color: #f48fb1;
-            color: white;
-        }
-
-        .btn-upload-music:hover {
-            background-color: #f06292;
-        }
-
-        .music-info {
-            text-align: center;
-            color: #e91e63;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .music-status {
-            color: #c2185b;
-            font-size: 13px;
-        }
-
-        .player-controls {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
+            gap: 14px;
         }
 
         .btn-play-pause {
             background-color: #e91e63;
             color: white;
-            width: clamp(40px, 5vmin, 52px);
-            height: clamp(40px, 5vmin, 52px);
-            padding: 0;
-            display: inline-flex;
+            border: none;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 16px;
-            border-radius: 9999px;
+            flex-shrink: 0;
+            transition: background 0.2s;
         }
 
-        .btn-play-pause:hover {
-            background-color: #c2185b;
-        }
+        .btn-play-pause:hover { background-color: #c2185b; }
 
         .progress-container {
-            width: min(560px, 78vw);
-            min-width: 240px;
             display: flex;
             align-items: center;
             gap: 10px;
+            flex: 1;
+            max-width: 600px;
         }
 
         .progress-bar {
@@ -424,7 +126,6 @@
             border-radius: 4px;
             cursor: pointer;
             border: 1px solid #f48fb1;
-            position: relative;
         }
 
         .progress-fill {
@@ -439,41 +140,72 @@
             color: #e91e63;
             font-weight: 600;
             font-size: 13px;
-            min-width: 50px;
-            text-align: right;
+            white-space: nowrap;
+            min-width: 80px;
         }
 
-        audio {
-            display: none;
+        .music-upload-label {
+            background: #f8bbd0;
+            color: #c2185b;
+            border: 1.5px solid #f48fb1;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s;
         }
 
-        /* ===== CALENDAR SECTION ===== */
+        .music-upload-label:hover { background: #f48fb1; color: #fff; }
+
+        audio { display: none; }
+
+        /* ===== 4. CALENDAR (Bottom — never overlaps photos) ===== */
+        .calendar-section {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 16px;
+            padding: 28px;
+            margin: 24px auto;
+            max-width: 1100px;
+            width: calc(100% - 40px);
+            box-shadow: 0 4px 20px rgba(233, 30, 99, 0.15);
+            border: 2px solid #f48fb1;
+        }
+
+        .section-title {
+            color: #e91e63;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
         .calendar-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
         .calendar-nav-btn {
             background-color: #f48fb1;
             color: white;
-            padding: 8px 15px;
+            padding: 8px 18px;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s;
+            font-weight: 700;
+            font-size: 14px;
+            transition: background 0.2s;
         }
 
-        .calendar-nav-btn:hover {
-            background-color: #f06292;
-        }
+        .calendar-nav-btn:hover { background-color: #f06292; }
 
         .month-year {
             color: #e91e63;
             font-weight: 700;
-            font-size: 18px;
+            font-size: 20px;
             text-align: center;
             flex: 1;
         }
@@ -482,7 +214,7 @@
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 5px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
 
         .weekday {
@@ -491,15 +223,10 @@
             color: #e91e63;
             font-size: 12px;
             padding: 8px 0;
+            text-transform: uppercase;
         }
 
-        .weekday.sunday {
-            color: #d32f2f;
-        }
-
-        .weekday.saturday {
-            color: #e91e63;
-        }
+        .weekday.sunday { color: #d32f2f; }
 
         .calendar-grid {
             display: grid;
@@ -516,38 +243,22 @@
             border-radius: 8px;
             font-weight: 700;
             color: #444;
-            font-size: var(--calendar-day-font-size);
-            line-height: 1;
+            font-size: clamp(13px, 2.2vw, 22px);
             background-color: white;
             position: relative;
+            cursor: pointer;
+            transition: all 0.15s;
         }
 
-        .calendar-day.other-month {
-            color: #ccc;
-            background-color: #fce4ec;
-        }
-
-        .calendar-day.today {
-            background-color: #e91e63;
-            color: white;
-            font-weight: 700;
-        }
-
-        .calendar-day.sunday {
-            color: #d32f2f;
-        }
-
-        .calendar-day.saturday {
-            color: #e91e63;
-        }
-
-        .calendar-day.other-month.sunday {
-            color: #ffb3ba;
-        }
-
-        .calendar-day.other-month.saturday {
-            color: #f8bbd0;
-        }
+        .calendar-day:hover { background-color: #f8bbd0; }
+        .calendar-day.other-month { color: #ccc; background-color: #fce4ec; }
+        .calendar-day.today { background-color: #e91e63; color: white; }
+        .calendar-day.sunday { color: #d32f2f; }
+        .calendar-day.saturday { color: #e91e63; }
+        .calendar-day.other-month.sunday { color: #ffb3ba; }
+        .calendar-day.other-month.saturday { color: #f8bbd0; }
+        .calendar-day.today.sunday,
+        .calendar-day.today.saturday { color: white; }
 
         .holiday-indicator {
             position: absolute;
@@ -555,37 +266,21 @@
             height: 6px;
             background-color: #e91e63;
             border-radius: 50%;
-            bottom: 2px;
-            right: 2px;
+            bottom: 3px;
+            right: 3px;
         }
 
-        .calendar-day.today .holiday-indicator {
-            background-color: white;
-        }
-
-        .calendar-day.holiday {
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
+        .calendar-day.today .holiday-indicator { background-color: white; }
+        .calendar-day.holiday { cursor: pointer; }
         .calendar-day.holiday:hover {
-            box-shadow: 0 0 8px rgba(233, 30, 99, 0.4);
-            transform: scale(1.05);
-        }
-
-        .calendar-day:not(.other-month) {
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .calendar-day:not(.other-month):hover {
-            background-color: #f8bbd0;
+            box-shadow: 0 0 10px rgba(233, 30, 99, 0.4);
+            transform: scale(1.06);
         }
 
         .holidays-list {
             margin-top: 20px;
-            padding-top: 20px;
-            border-top: 2px solid #f48fb1;
+            padding-top: 16px;
+            border-top: 2px solid #f8bbd0;
         }
 
         .holidays-list-title {
@@ -599,7 +294,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 0;
+            padding: 5px 0;
             font-size: 13px;
             color: #666;
         }
@@ -616,778 +311,293 @@
             color: #e91e63;
             text-decoration: none;
             font-weight: 600;
-            cursor: pointer;
         }
 
-        .holiday-item a:hover {
-            text-decoration: underline;
-        }
+        .holiday-item a:hover { text-decoration: underline; }
 
-        /* Responsive Design */
-
-        /* Desktop layout: keep marquee unobstructed; calendar appears on next viewport scroll */
-        @media (hover: hover) and (pointer: fine) {
-            .calendar-section {
-                margin-top: calc(var(--viewport-h) + 24px);
-                margin-bottom: 0;
-            }
-        }
-        
-        /* Tablet and up (default) */
-        @media (min-width: 769px) {
-            .container {
-                max-width: 1200px;
-            }
-            
-            .section {
-                padding: 25px;
-            }
-            
-            .section-title {
-                font-size: 20px;
-            }
-            
-            .marquee-banner {
-                font-size: 14px;
-            }
-        }
-        
-        /* Desktop+ (1200px and above) */
-        @media (min-width: 1200px) {
-            .container {
-                padding: 30px;
-            }
-            
-            .section {
-                padding: 30px;
-                margin-bottom: 25px;
-            }
-        }
-        
-        /* Tablet (768px and down) */
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
-            .container {
-                padding: 12px;
-                max-width: 100%;
-                width: 100%;
-            }
-
-            .section {
-                padding: 18px;
-                margin-bottom: 15px;
-                border-radius: 12px;
-            }
-            
-            .section-title {
-                font-size: 18px;
-                margin-bottom: 15px;
-            }
-
-            
-            .photo-marquee {
-                padding: 8px 0;
-            }
-            
-            .photo-marquee-track {
-                gap: 12px;
-                padding: 0 12px;
-            }
-            
-            .marquee-banner {
-                font-size: 12px;
-                padding: 10px 0;
-            }
-
-            .player-controls {
-                gap: 12px;
-            }
-            
-            .btn-play-pause {
-                padding: 10px 24px;
-                font-size: 15px;
-            }
-
-            .progress-container {
-                flex-direction: column;
-                min-width: auto;
-                gap: 8px;
-            }
-
-            .progress-bar {
-                height: 6px;
-            }
-
-            .time-display {
-                min-width: auto;
-                text-align: center;
-                font-size: 12px;
-            }
-            
-            .calendar-nav-btn {
-                padding: 6px 12px;
-                font-size: 13px;
-            }
-            
-            .month-year {
-                font-size: 16px;
-            }
-            
-            .weekday {
-                font-size: 11px;
-                padding: 6px 0;
-            }
-            
-            
-            .holidays-list-title {
-                font-size: 13px;
-            }
-            
-            .holiday-item {
-                font-size: 12px;
-                padding: 5px 0;
-            }
-
-            .calendar-section {
-                margin-top: clamp(200px, 50vh, 850px);
-            }
+            .photo-marquee-section { height: 45vh; }
+            .calendar-section { padding: 16px; margin: 14px auto; width: calc(100% - 24px); }
+            .month-year { font-size: 16px; }
+            .calendar-nav-btn { padding: 6px 12px; font-size: 13px; }
+            .music-player-bar { padding: 10px 12px; gap: 10px; }
         }
-        
-        /* Small tablet (600px and down) */
-        @media (max-width: 600px) {
-            .photo-marquee {
-                height: clamp(250px, 50vmax, 400px);
-            }
-            .container {
-                padding: 10px;
-            }
 
-            .section {
-                padding: 15px;
-                border-radius: 10px;
-            }
-            
-            .section-title {
-                font-size: 17px;
-                margin-bottom: 12px;
-            }
-
-            
-            .photo-marquee-track {
-                gap: 10px;
-                padding: 0 10px;
-            }
-            
-            .marquee-banner {
-                font-size: 11px;
-                padding: 8px 0;
-            }
-            
-            .marquee-track {
-                animation-duration: 24s;
-            }
-
-            .btn-play-pause {
-                width: clamp(38px, 7vmin, 46px);
-                height: clamp(38px, 7vmin, 46px);
-                padding: 0;
-                font-size: 14px;
-            }
-
-            .player-controls {
-                gap: 10px;
-            }
-
-            .progress-bar {
-                height: 5px;
-            }
-
-            .time-display {
-                font-size: 11px;
-            }
-            
-            .calendar-grid {
-                gap: 3px;
-            }
-            
-            .calendar-day {
-                border-radius: 6px;
-            }
-            
-            .weekday {
-                font-size: 10px;
-            }
-            
-            .photo-count {
-                font-size: 12px;
-                margin-top: 8px;
-            }
-        }
-        
-        /* Mobile (480px and down) */
         @media (max-width: 480px) {
-            .photo-marquee {
-                height: clamp(220px, 40vmax, 350px);
-            }
-            body {
-                background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
-            }
-            
-            .container {
-                padding: 8px;
-            }
-
-            .section {
-                padding: 12px;
-                margin-bottom: 12px;
-                border-radius: 8px;
-                box-shadow: 0 2px 8px rgba(233, 30, 99, 0.1);
-            }
-            
-            .section-title {
-                font-size: 16px;
-                margin-bottom: 10px;
-            }
-
-            
-            .photo-marquee {
-                padding: 6px 0;
-            }
-            
-            .photo-marquee-track {
-                gap: 8px;
-                padding: 0 8px;
-            }
-            
-            .marquee-banner {
-                font-size: 10px;
-                padding: 6px 0;
-            }
-            
-            .marquee-track {
-                animation-duration: 20s;
-            }
-
-            .btn-play-pause {
-                width: clamp(36px, 9vmin, 44px);
-                height: clamp(36px, 9vmin, 44px);
-                padding: 0;
-                font-size: 13px;
-            }
-
-            .player-controls {
-                gap: 8px;
-                flex-direction: column;
-            }
-
-            .music-float-pill {
-                border-radius: 18px;
-                padding: 12px;
-            }
-
-            .music-float-pill .player-controls {
-                flex-wrap: wrap;
-            }
-
-            .music-float-pill .progress-container {
-                width: 100%;
-                min-width: 0;
-            }
-            
-            .progress-container {
-                width: 100%;
-                gap: 6px;
-            }
-
-            .progress-bar {
-                height: 4px;
-            }
-
-            .time-display {
-                font-size: 10px;
-            }
-            
-            .calendar-header {
-                gap: 8px;
-                margin-bottom: 15px;
-            }
-            
-            .calendar-nav-btn {
-                padding: 5px 10px;
-                font-size: 12px;
-                flex: 1;
-                max-width: 70px;
-            }
-            
-            .month-year {
-                font-size: 14px;
-                flex: 1;
-            }
-            
-            .weekday {
-                font-size: 9px;
-                padding: 4px 0;
-            }
-            
-            .calendar-grid {
-                gap: 2px;
-            }
-            
-            .calendar-day {
-                aspect-ratio: 1;
-                border-radius: 4px;
-                font-weight: 600;
-            }
-            
-            .holidays-list {
-                margin-top: 15px;
-                padding-top: 15px;
-            }
-            
-            .holidays-list-title {
-                font-size: 12px;
-                margin-bottom: 8px;
-            }
-            
-            .holiday-item {
-                font-size: 11px;
-                padding: 4px 0;
-                gap: 6px;
-            }
-            
-            .holiday-dot {
-                width: 5px;
-                height: 5px;
-            }
-            
-            .photo-count {
-                font-size: 11px;
-                margin-top: 6px;
-            }
-
-            .calendar-section {
-                margin-top: clamp(140px, 45vh, 600px);
-            }
-            
-            .music-float-pill {
-                width: min(calc(100vw - 20px), 500px);
-            }
+            .photo-marquee-section { height: 40vh; }
+            .marquee-banner marquee { font-size: 12px; }
+            .calendar-section { padding: 12px; }
+            .section-title { font-size: 16px; }
+            .btn-play-pause { width: 38px; height: 38px; font-size: 14px; }
         }
-
-        /* Short-height screens (landscape phones / small windows) */
-        @media (max-height: 620px) {
-            :root {
-                --marquee-photo-size: clamp(90px, calc((var(--viewport-h) - 60px) / 2.5), min(35vmin, 350px));
-                --marquee-speed: clamp(30s, calc(20s + 35vw), 65s);
-            }
-
-            .photo-marquee {
-                padding-bottom: clamp(4px, 1.5vmin, 10px);
-                padding-top: clamp(2px, 0.5vmin, 4px);
-                align-items: center;
-            }
-
-            .photo-marquee-track {
-                gap: clamp(5px, 1vmin, 10px);
-            }
-
-            .music-float-pill {
-                padding: 8px 12px;
-                width: min(calc(100vw - 20px), 600px);
-                max-height: calc(var(--viewport-h) - 100px);
-            }
-
-            .music-float-pill .progress-container {
-                width: min(calc(100% - 20px), 50vw);
-            }
-        }
-
-        /* Ultra-wide screens (cinema / dual-monitor aspect) */
-        @media (min-width: 2000px) and (aspect-ratio: 16 / 9) {
-            :root {
-                --marquee-photo-size: clamp(140px, calc((var(--viewport-h) - 140px) / 2), 600px);
-                --marquee-speed: clamp(45s, calc(35s + 50vw), 85s);
-            }
-
-            .photo-marquee-track {
-                gap: clamp(12px, 2vmin, 20px);
-            }
-        }
-
-        /* Tall/portrait orientation (tablets / tall phones) */
-        @media (aspect-ratio: 9 / 16) {
-            :root {
-                --marquee-photo-size: clamp(110px, calc((var(--viewport-h) - 100px) / 2.2), min(42vmin, 480px));
-                --marquee-speed: clamp(32s, calc(22s + 30vw), 60s);
-            }
-
-            .photo-marquee {
-                padding: clamp(4px, 1vmin, 8px) clamp(6px, 1.5vmin, 12px);
-            }
-        }
-
-        /* Square-ish screens */
-        @media (aspect-ratio: 1 / 1) {
-            :root {
-                --marquee-photo-size: clamp(115px, calc((var(--viewport-h) - 110px) / 2), min(40vmin, 500px));
-                --marquee-speed: clamp(33s, calc(23s + 32vw), 62s);
-            }
-        }
-        
-        /* Extra small mobile (360px and down) */
-        @media (max-width: 360px) {
-            .photo-marquee {
-                height: clamp(200px, 38vh, 300px);
-            }
-            .section {
-                padding: 10px;
-            }
-            
-            .section-title {
-                font-size: 15px;
-            }
-
-            
-            .marquee-banner {
-                font-size: 9px;
-            }
-            
-            .btn-play-pause {
-                width: clamp(34px, 11vmin, 42px);
-                height: clamp(34px, 11vmin, 42px);
-                padding: 0;
-                font-size: 12px;
-            }
-            
-            
-            .weekday {
-                font-size: 8px;
-            }
-        }
-
     </style>
 </head>
 <body>
-    <!-- Photo marquee background -->
-    <div class="photo-marquee" aria-hidden="true">
+
+    <!-- ===== 1. MARQUEE BANNER (Very Top) ===== -->
+    <div class="marquee-banner">
+        <marquee behavior="scroll" direction="left" scrollamount="5">
+            ♥ New Year's Day &nbsp;•&nbsp; ♥ EDSA People Power Anniversary &nbsp;•&nbsp; ♥ Maundy Thursday &nbsp;•&nbsp; ♥ Good Friday &nbsp;•&nbsp; ♥ Black Saturday &nbsp;•&nbsp; ♥ Araw ng Kagitingan &nbsp;•&nbsp; ♥ Labor Day &nbsp;•&nbsp; ♥ Independence Day &nbsp;•&nbsp; ♥ Ninoy Aquino Day &nbsp;•&nbsp; ♥ National Heroes Day &nbsp;•&nbsp; ♥ All Saints' Day &nbsp;•&nbsp; ♥ All Souls' Day &nbsp;•&nbsp; ♥ Bonifacio Day &nbsp;•&nbsp; ♥ Feast of the Immaculate Conception &nbsp;•&nbsp; ♥ Christmas Eve &nbsp;•&nbsp; ♥ Christmas Day &nbsp;•&nbsp; ♥ Rizal Day &nbsp;•&nbsp; ♥ New Year's Eve &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            ♥ New Year's Day &nbsp;•&nbsp; ♥ EDSA People Power Anniversary &nbsp;•&nbsp; ♥ Maundy Thursday &nbsp;•&nbsp; ♥ Good Friday &nbsp;•&nbsp; ♥ Black Saturday &nbsp;•&nbsp; ♥ Araw ng Kagitingan &nbsp;•&nbsp; ♥ Labor Day &nbsp;•&nbsp; ♥ Independence Day &nbsp;•&nbsp; ♥ Ninoy Aquino Day &nbsp;•&nbsp; ♥ National Heroes Day &nbsp;•&nbsp; ♥ All Saints' Day &nbsp;•&nbsp; ♥ All Souls' Day &nbsp;•&nbsp; ♥ Bonifacio Day &nbsp;•&nbsp; ♥ Feast of the Immaculate Conception &nbsp;•&nbsp; ♥ Christmas Eve &nbsp;•&nbsp; ♥ Christmas Day &nbsp;•&nbsp; ♥ Rizal Day &nbsp;•&nbsp; ♥ New Year's Eve
+        </marquee>
+    </div>
+
+    <!-- ===== 2. PHOTO GALLERY (Horizontal scrolling marquee) ===== -->
+    <div class="photo-marquee-section">
         <div class="photo-marquee-track" id="photoGrid"></div>
     </div>
 
-    <!-- Marquee Banner -->
-    <div class="marquee-banner">
-        <div class="marquee-track" id="marqueeContent">
-            <div class="marquee-item">♥ New Year's Eve • ♥ New Year's Day • ♥ EDSA People Power Anniversary • ♥ Maundy Thursday • ♥ Good Friday • ♥ Black Saturday • ♥ Easter Sunday • ♥ Easter Monday • ♥ Araw ng Kagitingan • ♥ Labor Day • ♥ Independence Day • ♥ Feast of the Immaculate Conception • ♥ Christmas Day • ♥ Additional Special Holiday</div>
-            <div class="marquee-item" aria-hidden="true">♥ New Year's Eve • ♥ New Year's Day • ♥ EDSA People Power Anniversary • ♥ Maundy Thursday • ♥ Good Friday • ♥ Black Saturday • ♥ Easter Sunday • ♥ Easter Monday • ♥ Araw ng Kagitingan • ♥ Labor Day • ♥ Independence Day • ♥ Feast of the Immaculate Conception • ♥ Christmas Day • ♥ Additional Special Holiday</div>
+    <!-- ===== 3. MUSIC PLAYER (Centered bar) ===== -->
+    <div class="music-player-bar">
+        <button class="btn-play-pause" id="playPauseBtn">▶</button>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="time-display">
+                <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+            </div>
         </div>
+        <label class="music-upload-label">
+            ♪ Upload Music
+            <input type="file" id="musicInput" accept="audio/*" style="display:none;" />
+        </label>
     </div>
 
-    <!-- Main Container -->
-    <div class="container">
-        <!-- SECTION 2: MUSIC PLAYER -->
-        <div class="section music-section">
-            <div class="section-title">🎵 Music Player</div>
-            <div class="music-player-section music-float-pill">
-                <div class="player-controls">
-                    <button class="btn btn-play-pause" id="playPauseBtn">▶</button>
-                    <div class="progress-container">
-                        <div class="progress-bar" id="progressBar">
-                            <div class="progress-fill" id="progressFill"></div>
-                        </div>
-                        <div class="time-display">
-                            <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <audio id="audioPlayer" loop preload="none">
-                <source src="The One That Got Away - Katy Perry (Lyrics).mp3" type="audio/mpeg">
-            </audio>
-            <input type="file" id="musicInput" accept="audio/*" />
-        </div>
+    <audio id="audioPlayer" loop preload="none">
+        <source src="The One That Got Away - Katy Perry (Lyrics).mp3" type="audio/mpeg">
+    </audio>
 
-        <!-- SECTION 3: HOLIDAY CALENDAR -->
-        <div class="section calendar-section">
-            <div class="section-title">📅 Holiday Calendar</div>
-            <div class="calendar-header">
-                <button class="calendar-nav-btn" id="prevMonthBtn">← Prev</button>
-                <div class="month-year" id="monthYear"></div>
-                <button class="calendar-nav-btn" id="nextMonthBtn">Next →</button>
-            </div>
-            <div class="weekday-header">
-                <div class="weekday sunday">SUN</div>
-                <div class="weekday">MON</div>
-                <div class="weekday">TUE</div>
-                <div class="weekday">WED</div>
-                <div class="weekday">THU</div>
-                <div class="weekday">FRI</div>
-                <div class="weekday saturday">SAT</div>
-            </div>
-            <div class="calendar-grid" id="calendarGrid"></div>
-            <div class="holidays-list">
-                <div class="holidays-list-title">📍 Philippine Holidays</div>
-                <div id="holidaysList"></div>
-            </div>
+    <!-- ===== 4. CALENDAR (Bottom) ===== -->
+    <div class="calendar-section">
+        <div class="section-title">📅 Holiday Calendar</div>
+        <div class="calendar-header">
+            <button class="calendar-nav-btn" id="prevMonthBtn">← Prev</button>
+            <div class="month-year" id="monthYear"></div>
+            <button class="calendar-nav-btn" id="nextMonthBtn">Next →</button>
+        </div>
+        <div class="weekday-header">
+            <div class="weekday sunday">SUN</div>
+            <div class="weekday">MON</div>
+            <div class="weekday">TUE</div>
+            <div class="weekday">WED</div>
+            <div class="weekday">THU</div>
+            <div class="weekday">FRI</div>
+            <div class="weekday saturday">SAT</div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="holidays-list">
+            <div class="holidays-list-title">📍 Philippine Holidays This Month</div>
+            <div id="holidaysList"></div>
         </div>
     </div>
 
     <script>
-        // Philippine Holidays with Wikipedia URLs
-        const philippineHolidays = {
-            '01-01': { name: 'New Year\'s Day', url: 'https://en.wikipedia.org/wiki/New_Year%27s_Day' },
-            '02-12': { name: 'EDSA People Power Anniversary', url: 'https://en.wikipedia.org/wiki/People_Power_Revolution' },
-            '04-09': { name: 'Araw ng Kagitingan', url: 'https://en.wikipedia.org/wiki/Araw_ng_Kagitingan' },
+        // ===== HOLIDAYS DATA =====
+        const allHolidays = {
+            '01-01': { name: "New Year's Day", url: 'https://en.wikipedia.org/wiki/New_Year%27s_Day' },
+            '02-25': { name: 'EDSA People Power Anniversary', url: 'https://en.wikipedia.org/wiki/People_Power_Revolution' },
+            '04-02': { name: 'Maundy Thursday', url: 'https://en.wikipedia.org/wiki/Maundy_Thursday' },
+            '04-03': { name: 'Good Friday', url: 'https://en.wikipedia.org/wiki/Good_Friday' },
+            '04-04': { name: 'Black Saturday', url: 'https://en.wikipedia.org/wiki/Holy_Saturday' },
+            '04-09': { name: 'Araw ng Kagitingan', url: 'https://en.wikipedia.org/wiki/Day_of_Valor' },
             '05-01': { name: 'Labor Day', url: 'https://en.wikipedia.org/wiki/International_Workers%27_Day' },
-            '06-12': { name: 'Independence Day', url: 'https://en.wikipedia.org/wiki/Philippine_Declaration_of_Independence' },
-            '11-01': { name: 'All Saints\' Day', url: 'https://en.wikipedia.org/wiki/All_Saints%27_Day' },
-            '11-30': { name: 'Bonifacio Day', url: 'https://en.wikipedia.org/wiki/Andres_Bonifacio' },
-            '12-08': { name: 'Feast of the Immaculate Conception', url: 'https://en.wikipedia.org/wiki/Immaculate_Conception' },
-            '12-25': { name: 'Christmas Day', url: 'https://en.wikipedia.org/wiki/Christmas' },
-            '12-26': { name: 'Additional Special Holiday', url: 'https://en.wikipedia.org/wiki/Christmas_Day' },
-            '12-30': { name: 'Rizal Day', url: 'https://en.wikipedia.org/wiki/Jos%C3%A9_Rizal' },
-            '12-31': { name: 'New Year\'s Eve', url: 'https://en.wikipedia.org/wiki/New_Year%27s_Eve' }
+            '06-12': { name: 'Independence Day', url: 'https://en.wikipedia.org/wiki/Independence_Day_(Philippines)' },
+            '08-21': { name: 'Ninoy Aquino Day', url: 'https://en.wikipedia.org/wiki/Ninoy_Aquino_Day' },
+            '08-31': { name: 'National Heroes Day', url: 'https://en.wikipedia.org/wiki/National_Heroes_Day_(Philippines)' },
+            '11-01': { name: "All Saints' Day", url: 'https://en.wikipedia.org/wiki/All_Saints%27_Day' },
+            '11-02': { name: "All Souls' Day", url: 'https://en.wikipedia.org/wiki/All_Souls%27_Day' },
+            '11-30': { name: 'Bonifacio Day', url: 'https://en.wikipedia.org/wiki/Bonifacio_Day' },
+            '12-08': { name: 'Feast of the Immaculate Conception', url: 'https://en.wikipedia.org/wiki/Feast_of_the_Immaculate_Conception' },
+            '12-24': { name: 'Christmas Eve', url: 'https://en.wikipedia.org/wiki/Christmas_Eve' },
+            '12-25': { name: 'Christmas Day', url: 'https://en.wikipedia.org/wiki/Christmas_Day' },
+            '12-30': { name: 'Rizal Day', url: 'https://en.wikipedia.org/wiki/Rizal_Day' },
+            '12-31': { name: "New Year's Eve", url: 'https://en.wikipedia.org/wiki/New_Year%27s_Eve' },
         };
-
-        // Special moveable holidays for 2026
-        const moveableHolidays2026 = {
-            '04-09': { name: 'Maundy Thursday', url: 'https://en.wikipedia.org/wiki/Maundy_Thursday' },
-            '04-10': { name: 'Good Friday', url: 'https://en.wikipedia.org/wiki/Good_Friday' },
-            '04-11': { name: 'Black Saturday', url: 'https://en.wikipedia.org/wiki/Black_Saturday_(Easter)' },
-            '04-12': { name: 'Easter Sunday', url: 'https://en.wikipedia.org/wiki/Easter' },
-            '04-13': { name: 'Easter Monday', url: 'https://en.wikipedia.org/wiki/Easter_Monday' }
-        };
-
-        // Merge all holidays
-        const allHolidays = { ...philippineHolidays, ...moveableHolidays2026 };
-
-        let currentDate = new Date(2026, 3, 21); // April 21, 2026
-        let photos = [];
-        let musicName = '';
 
         // ===== PHOTO GALLERY =====
-        function initLocalPhotos() {
-            // Keep this list in sync with the actual files in the folder
-            const photoFileNames = ['IMG_1.jpg', 'IMG_3.jpg', 'IMG_4.jpg', 'IMG_5.jpg', 'IMG_6.jpg', 'IMG_7.jpg', 'IMG_8.jpg', 'IMG_9.jpg', 'IMG_10.jpg'];
-            photos = [];
-            
-            photoFileNames.forEach(fileName => {
-                photos.push(fileName);
-            });
-            
-            updatePhotosDisplay();
-        }
+        const photoFileNames = ['IMG_1.jpg','IMG_3.jpg','IMG_4.jpg','IMG_5.jpg','IMG_6.jpg','IMG_7.jpg','IMG_8.jpg','IMG_9.jpg','IMG_10.jpg'];
 
-        function updatePhotosDisplay() {
-            const photoGrid = document.getElementById('photoGrid');
-            const photoCount = document.getElementById('photoCount');
-            const photoTotal = document.getElementById('photoTotal');
+        function buildPhotoMarquee() {
+            const track = document.getElementById('photoGrid');
+            track.innerHTML = '';
 
-            // Render photos for marquee
-            photoGrid.innerHTML = '';
-
-            const createPairEl = (a, b) => {
-                const pair = document.createElement('div');
-                pair.className = 'photo-pair';
-
-                const firstItem = document.createElement('div');
-                firstItem.className = 'photo-item';
-                const firstImg = document.createElement('img');
-                firstImg.src = a;
-                firstItem.appendChild(firstImg);
-                pair.appendChild(firstItem);
-
-                const secondItem = document.createElement('div');
-                secondItem.className = 'photo-item';
-                const secondImg = document.createElement('img');
-                secondImg.src = b;
-                secondItem.appendChild(secondImg);
-                pair.appendChild(secondItem);
-
-                return pair;
-            };
-
-            const pairsData = [];
-            for (let i = 0; i < photos.length; i += 2) {
-                const first = photos[i];
-                const second = photos[i + 1] ?? photos[0];
-                if (first && second) pairsData.push([first, second]);
+            const pairs = [];
+            for (let i = 0; i < photoFileNames.length; i += 2) {
+                pairs.push([photoFileNames[i], photoFileNames[i+1] || photoFileNames[0]]);
             }
 
-            // Build 2 identical sequences for seamless infinite scroll.
-            const buildSequence = () => {
-                for (const [a, b] of pairsData) {
-                    photoGrid.appendChild(createPairEl(a, b));
-                }
-            };
-            buildSequence();
-            buildSequence();
+            const buildSeq = () => {
+                pairs.forEach(([a, b]) => {
+                    const pair = document.createElement('div');
+                    pair.className = 'photo-pair';
 
-            if (photoCount) photoCount.textContent = photos.length;
-            if (photoTotal) photoTotal.textContent = photos.length;
+                    [a, b].forEach(src => {
+                        const item = document.createElement('div');
+                        item.className = 'photo-item';
+                        const img = document.createElement('img');
+                        img.src = src;
+                        img.alt = '';
+                        item.appendChild(img);
+                        pair.appendChild(item);
+                    });
+
+                    track.appendChild(pair);
+                });
+            };
+
+            buildSeq();
+            buildSeq(); // duplicate for seamless loop
         }
 
         // ===== MUSIC PLAYER =====
-        function initAudioPlayer() {
-            const playPauseBtn = document.getElementById('playPauseBtn');
-            const audioPlayer = document.getElementById('audioPlayer');
+        function initMusic() {
+            const playBtn = document.getElementById('playPauseBtn');
+            const audio = document.getElementById('audioPlayer');
             const progressBar = document.getElementById('progressBar');
             const progressFill = document.getElementById('progressFill');
             const currentTimeEl = document.getElementById('currentTime');
             const durationEl = document.getElementById('duration');
+            const musicInput = document.getElementById('musicInput');
 
-            playPauseBtn.addEventListener('click', () => {
-                if (audioPlayer.paused) {
-                    if (audioPlayer.readyState === 0) {
-                        audioPlayer.load();
-                    }
-                    audioPlayer.play();
-                    playPauseBtn.textContent = '⏸';
+            const fmt = s => {
+                if (!s || isNaN(s)) return '0:00';
+                return Math.floor(s/60) + ':' + String(Math.floor(s%60)).padStart(2,'0');
+            };
+
+            playBtn.addEventListener('click', () => {
+                if (audio.paused) {
+                    if (audio.readyState === 0) audio.load();
+                    audio.play();
+                    playBtn.textContent = '⏸';
                 } else {
-                    audioPlayer.pause();
-                    playPauseBtn.textContent = '▶';
+                    audio.pause();
+                    playBtn.textContent = '▶';
                 }
             });
 
-            audioPlayer.addEventListener('timeupdate', () => {
-                const percentage = (audioPlayer.currentTime / audioPlayer.duration) * 100;
-                progressFill.style.width = percentage + '%';
-                currentTimeEl.textContent = formatTime(audioPlayer.currentTime);
+            audio.addEventListener('timeupdate', () => {
+                progressFill.style.width = ((audio.currentTime / audio.duration) * 100) + '%';
+                currentTimeEl.textContent = fmt(audio.currentTime);
             });
 
-            audioPlayer.addEventListener('loadedmetadata', () => {
-                durationEl.textContent = formatTime(audioPlayer.duration);
+            audio.addEventListener('loadedmetadata', () => {
+                durationEl.textContent = fmt(audio.duration);
             });
 
-            progressBar.addEventListener('click', (e) => {
+            progressBar.addEventListener('click', e => {
                 const rect = progressBar.getBoundingClientRect();
-                const percent = (e.clientX - rect.left) / rect.width;
-                audioPlayer.currentTime = percent * audioPlayer.duration;
+                audio.currentTime = ((e.clientX - rect.left) / rect.width) * audio.duration;
             });
 
-            audioPlayer.addEventListener('ended', () => {
-                playPauseBtn.textContent = '▶';
-            });
-            
-            // Set initial duration when metadata loads
-            audioPlayer.addEventListener('loadedmetadata', () => {
-                durationEl.textContent = formatTime(audioPlayer.duration);
-            });
-        }
+            audio.addEventListener('ended', () => { playBtn.textContent = '▶'; });
 
-        function formatTime(seconds) {
-            if (!seconds || isNaN(seconds)) return '0:00';
-            const mins = Math.floor(seconds / 60);
-            const secs = Math.floor(seconds % 60);
-            return `${mins}:${secs.toString().padStart(2, '0')}`;
+            musicInput.addEventListener('change', () => {
+                const file = musicInput.files[0];
+                if (!file) return;
+                audio.src = URL.createObjectURL(file);
+                audio.play();
+                playBtn.textContent = '⏸';
+            });
         }
 
         // ===== CALENDAR =====
+        let currentDate = new Date(2026, 3, 1);
+
         function renderCalendar() {
-            const monthYear = document.getElementById('monthYear');
-            const calendarGrid = document.getElementById('calendarGrid');
-            
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            
-            monthYear.textContent = currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            const y = currentDate.getFullYear();
+            const m = currentDate.getMonth();
 
-            const firstDay = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            document.getElementById('monthYear').textContent =
+                currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 
-            calendarGrid.innerHTML = '';
-
-            // Previous month days
-            for (let i = firstDay - 1; i >= 0; i--) {
-                const day = daysInPrevMonth - i;
-                const dateStr = String(month).padStart(2, '0') + '-' + String(day).padStart(2, '0');
-                const dayEl = createDayElement(day, dateStr, true, false);
-                calendarGrid.appendChild(dayEl);
-            }
-
-            // Current month days
+            const firstDay = new Date(y, m, 1).getDay();
+            const daysInMonth = new Date(y, m+1, 0).getDate();
+            const daysInPrevMonth = new Date(y, m, 0).getDate();
             const today = new Date();
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = String(month + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
-                const isToday = year === today.getFullYear() && month === today.getMonth() && day === today.getDate();
-                const dayEl = createDayElement(day, dateStr, false, isToday);
-                calendarGrid.appendChild(dayEl);
+            const grid = document.getElementById('calendarGrid');
+            grid.innerHTML = '';
+
+            const makeCell = (day, dateStr, isOther) => {
+                const el = document.createElement('div');
+                el.className = 'calendar-day';
+                el.textContent = day;
+
+                if (isOther) el.classList.add('other-month');
+
+                const isToday = !isOther &&
+                    y === today.getFullYear() &&
+                    m === today.getMonth() &&
+                    day === today.getDate();
+                if (isToday) el.classList.add('today');
+
+                const dow = new Date(y, m, isOther ? 1 : day).getDay();
+                if (dow === 0) el.classList.add('sunday');
+                if (dow === 6) el.classList.add('saturday');
+
+                const h = allHolidays[dateStr];
+                if (h) {
+                    el.classList.add('holiday');
+                    const dot = document.createElement('div');
+                    dot.className = 'holiday-indicator';
+                    el.appendChild(dot);
+                    el.addEventListener('click', () => window.open(h.url, '_blank'));
+                }
+                return el;
+            };
+
+            const pad = n => String(n).padStart(2,'0');
+
+            for (let i = firstDay - 1; i >= 0; i--) {
+                const d = daysInPrevMonth - i;
+                const ds = pad(m === 0 ? 12 : m) + '-' + pad(d);
+                grid.appendChild(makeCell(d, ds, true));
             }
 
-            // Next month days
-            const totalCells = calendarGrid.children.length;
-            const remainingCells = 42 - totalCells;
-            for (let day = 1; day <= remainingCells; day++) {
-                const dateStr = String(month + 2).padStart(2, '0') + '-' + String(day).padStart(2, '0');
-                const dayEl = createDayElement(day, dateStr, true, false);
-                calendarGrid.appendChild(dayEl);
+            for (let d = 1; d <= daysInMonth; d++) {
+                const ds = pad(m+1) + '-' + pad(d);
+                grid.appendChild(makeCell(d, ds, false));
             }
 
-            renderHolidaysList();
-        }
-
-        function createDayElement(day, dateStr, isOtherMonth, isToday) {
-            const dayEl = document.createElement('div');
-            dayEl.className = 'calendar-day';
-            dayEl.textContent = day;
-
-            if (isOtherMonth) {
-                dayEl.classList.add('other-month');
+            const total = grid.children.length;
+            const rem = 42 - total;
+            for (let d = 1; d <= rem; d++) {
+                const ds = pad(m+2 > 12 ? 1 : m+2) + '-' + pad(d);
+                grid.appendChild(makeCell(d, ds, true));
             }
 
-            if (isToday) {
-                dayEl.classList.add('today');
-            }
-
-            const dayOfWeek = new Date(currentDate.getFullYear(), currentDate.getMonth(), day).getDay();
-            if (dayOfWeek === 0) dayEl.classList.add('sunday');
-            if (dayOfWeek === 6) dayEl.classList.add('saturday');
-
-            if (allHolidays[dateStr]) {
-                dayEl.classList.add('holiday');
-                dayEl.innerHTML += '<div class="holiday-indicator"></div>';
-                dayEl.addEventListener('click', () => {
-                    window.open(allHolidays[dateStr].url, '_blank');
-                });
-            }
-
-            return dayEl;
-        }
-
-        function renderHolidaysList() {
-            const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-            const holidaysList = document.getElementById('holidaysList');
-            holidaysList.innerHTML = '';
-
-            Object.keys(allHolidays).forEach(dateStr => {
-                if (dateStr.startsWith(month)) {
-                    const holiday = allHolidays[dateStr];
-                    const itemEl = document.createElement('div');
-                    itemEl.className = 'holiday-item';
-                    itemEl.innerHTML = `
-                        <div class="holiday-dot"></div>
-                        <a href="${holiday.url}" target="_blank">${holiday.name}</a>
-                    `;
-                    holidaysList.appendChild(itemEl);
+            // Holidays list
+            const monthKey = pad(m+1);
+            const list = document.getElementById('holidaysList');
+            list.innerHTML = '';
+            Object.entries(allHolidays).forEach(([k, v]) => {
+                if (k.startsWith(monthKey + '-')) {
+                    const item = document.createElement('div');
+                    item.className = 'holiday-item';
+                    item.innerHTML = `<div class="holiday-dot"></div><a href="${v.url}" target="_blank">${v.name}</a>`;
+                    list.appendChild(item);
                 }
             });
+            if (!list.children.length) {
+                list.innerHTML = '<div class="holiday-item" style="color:#aaa;">No holidays this month</div>';
+            }
         }
 
-        // ===== INITIALIZATION =====
+        // ===== INIT =====
         document.addEventListener('DOMContentLoaded', () => {
-            initLocalPhotos();
-            initAudioPlayer();
-            
+            buildPhotoMarquee();
+            initMusic();
+            renderCalendar();
+
             document.getElementById('prevMonthBtn').addEventListener('click', () => {
                 currentDate.setMonth(currentDate.getMonth() - 1);
                 renderCalendar();
             });
-
             document.getElementById('nextMonthBtn').addEventListener('click', () => {
                 currentDate.setMonth(currentDate.getMonth() + 1);
                 renderCalendar();
             });
-
-            updatePhotosDisplay();
-            renderCalendar();
         });
     </script>
 </body>
