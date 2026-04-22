@@ -12,11 +12,29 @@
         }
 
         :root {
-            /* Scales photos to feel “viewport-sized” while staying safe on small screens */
+            --viewport-h: 100vh;
+            --viewport-w: 100vw;
             --photo-size: clamp(180px, min(70vh, 55vmin), 900px);
 
-            /* Makes day numbers more readable across devices */
+            --marquee-photo-size: clamp(
+                120px,
+                calc((var(--viewport-h) - 120px) / 2),
+                min(44vmin, 560px)
+            );
+
+            /* Adaptive animation speed: slower on wider screens, faster on narrower ones */
+            --marquee-speed: clamp(35s, calc(25s + 40vw), 75s);
+
             --calendar-day-font-size: clamp(18px, min(4.2vmin, 4.8vh), 38px);
+        }
+
+        /* Prefer modern viewport units when supported (fixes mobile address-bar issues) */
+        @supports (height: 100svh) {
+            :root { --viewport-h: 100svh; }
+        }
+
+        @supports (height: 100dvh) {
+            :root { --viewport-h: 100dvh; }
         }
 
         body {
@@ -24,6 +42,8 @@
             background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
             min-height: 100vh;
             padding: 0;
+            position: relative;
+            overflow-x: hidden;
         }
 
         /* Marquee Banner */
@@ -38,15 +58,21 @@
             font-size: 14px;
         }
 
-        .marquee-content {
-            display: inline-block;
-            animation: scroll-left 30s linear infinite;
-            padding-left: 100%;
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            will-change: transform;
+            animation: marquee-loop 28s linear infinite;
         }
 
-        @keyframes scroll-left {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100%); }
+        .marquee-item {
+            flex-shrink: 0;
+            padding-right: 32px;
+        }
+
+        @keyframes marquee-loop {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-50%, 0, 0); }
         }
 
         /* Main Container */
@@ -54,6 +80,9 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            position: relative;
+            z-index: 1;
+            width: 100%;
         }
 
         /* Section Styling */
@@ -64,6 +93,10 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(233, 30, 99, 0.15);
             border: 2px solid #f48fb1;
+        }
+
+        .calendar-section {
+            margin-top: clamp(200px, 60vh, 1000px);
         }
 
         .section-title {
@@ -84,34 +117,53 @@
         /* Photo Marquee */
         .photo-marquee {
             overflow: hidden;
-            position: relative;
-            width: 100%;
-            background-color: #fce4ec;
-            border-radius: 8px;
-            padding: 10px 0;
-            margin-bottom: 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            width: 100vw;
+            height: var(--viewport-h);
+            background-color: #f48fb1;
+            border-radius: 0;
+            display: flex;
+            align-items: flex-end;
+            padding-left: clamp(8px, 2vmin, 16px);
+            padding-right: clamp(8px, 2vmin, 16px);
+            padding-top: clamp(4px, 1.2vmin, 10px);
+            padding-bottom: clamp(12px, 3vmin, 22px);
+            margin: 0;
+            z-index: 0;
+            pointer-events: none;
         }
 
         .photo-marquee-track {
             display: flex;
-            gap: 15px;
-            animation: scroll-photos 15s linear infinite;
-            padding: 0 15px;
+            gap: clamp(8px, 1.5vmin, 18px);
+            padding: 0;
             width: max-content;
+            align-items: center;
+            animation-name: scroll-photos;
+            animation-duration: 50s;
+            animation-timing-function: linear;
+            animation-iteration-count: infinite;
             will-change: transform;
         }
 
         @keyframes scroll-photos {
             0% {
-                transform: translateX(0);
+                transform: translate3d(0, 0, 0);
             }
             100% {
-                transform: translateX(-50%);
+                transform: translate3d(-50%, 0, 0);
             }
         }
 
-        .photo-marquee:hover .photo-marquee-track {
-            animation-play-state: paused;
+        .photo-pair {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(6px, 1.4vmin, 16px);
+            flex-shrink: 0;
+            align-items: center;
         }
 
         .photo-grid {
@@ -167,6 +219,13 @@
 
         .photo-marquee-track .photo-item {
             flex-shrink: 0;
+            min-width: var(--marquee-photo-size);
+            width: var(--marquee-photo-size);
+            height: var(--marquee-photo-size);
+        }
+
+        .photo-marquee-track img {
+            opacity: 0.92;
         }
 
         .photo-item:hover {
@@ -257,6 +316,42 @@
             gap: 15px;
         }
 
+        .music-float-pill {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: min(760px, calc(100vw - 24px));
+            max-height: calc(var(--viewport-h) - 24px);
+            overflow: hidden;
+            background-color: rgba(255, 255, 255, 0.92);
+            border: 2px solid #f48fb1;
+            border-radius: 9999px;
+            box-shadow: 0 10px 30px rgba(233, 30, 99, 0.18);
+            padding: 12px 16px;
+            z-index: 5;
+        }
+
+        .music-float-pill .player-controls {
+            flex-wrap: nowrap;
+        }
+
+        .music-float-pill .progress-container {
+            width: min(520px, 56vw);
+        }
+
+        .music-section {
+            background: transparent;
+            border: none;
+            box-shadow: none;
+            padding: 0;
+            margin-bottom: 0;
+        }
+
+        .music-section .section-title {
+            display: none;
+        }
+
         .music-upload {
             display: flex;
             gap: 10px;
@@ -310,8 +405,8 @@
         }
 
         .progress-container {
-            flex: 1;
-            min-width: 200px;
+            width: min(560px, 78vw);
+            min-width: 240px;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -544,11 +639,24 @@
             }
         }
         
+        /* Desktop+ (1200px and above) */
+        @media (min-width: 1200px) {
+            .container {
+                padding: 30px;
+            }
+            
+            .section {
+                padding: 30px;
+                margin-bottom: 25px;
+            }
+        }
+        
         /* Tablet (768px and down) */
         @media (max-width: 768px) {
             .container {
                 padding: 12px;
                 max-width: 100%;
+                width: 100%;
             }
 
             .section {
@@ -625,10 +733,17 @@
                 font-size: 12px;
                 padding: 5px 0;
             }
+
+            .calendar-section {
+                margin-top: clamp(200px, 50vh, 850px);
+            }
         }
         
         /* Small tablet (600px and down) */
         @media (max-width: 600px) {
+            .photo-marquee {
+                height: clamp(250px, 50vmax, 400px);
+            }
             .container {
                 padding: 10px;
             }
@@ -654,8 +769,8 @@
                 padding: 8px 0;
             }
             
-            .marquee-content {
-                animation: scroll-left 25s linear infinite;
+            .marquee-track {
+                animation-duration: 24s;
             }
 
             .btn-play-pause {
@@ -695,6 +810,9 @@
         
         /* Mobile (480px and down) */
         @media (max-width: 480px) {
+            .photo-marquee {
+                height: clamp(220px, 40vmax, 350px);
+            }
             body {
                 background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
             }
@@ -730,8 +848,8 @@
                 padding: 6px 0;
             }
             
-            .marquee-content {
-                animation: scroll-left 20s linear infinite;
+            .marquee-track {
+                animation-duration: 20s;
             }
 
             .btn-play-pause {
@@ -743,6 +861,20 @@
             .player-controls {
                 gap: 8px;
                 flex-direction: column;
+            }
+
+            .music-float-pill {
+                border-radius: 18px;
+                padding: 12px;
+            }
+
+            .music-float-pill .player-controls {
+                flex-wrap: wrap;
+            }
+
+            .music-float-pill .progress-container {
+                width: 100%;
+                min-width: 0;
             }
             
             .progress-container {
@@ -815,10 +947,81 @@
                 font-size: 11px;
                 margin-top: 6px;
             }
+
+            .calendar-section {
+                margin-top: clamp(140px, 45vh, 600px);
+            }
+            
+            .music-float-pill {
+                width: min(calc(100vw - 20px), 500px);
+            }
+        }
+
+        /* Short-height screens (landscape phones / small windows) */
+        @media (max-height: 620px) {
+            :root {
+                --marquee-photo-size: clamp(90px, calc((var(--viewport-h) - 60px) / 2.5), min(35vmin, 350px));
+                --marquee-speed: clamp(30s, calc(20s + 35vw), 65s);
+            }
+
+            .photo-marquee {
+                padding-bottom: clamp(4px, 1.5vmin, 10px);
+                padding-top: clamp(2px, 0.5vmin, 4px);
+                align-items: center;
+            }
+
+            .photo-marquee-track {
+                gap: clamp(5px, 1vmin, 10px);
+            }
+
+            .music-float-pill {
+                padding: 8px 12px;
+                width: min(calc(100vw - 20px), 600px);
+                max-height: calc(var(--viewport-h) - 100px);
+            }
+
+            .music-float-pill .progress-container {
+                width: min(calc(100% - 20px), 50vw);
+            }
+        }
+
+        /* Ultra-wide screens (cinema / dual-monitor aspect) */
+        @media (min-width: 2000px) and (aspect-ratio: 16 / 9) {
+            :root {
+                --marquee-photo-size: clamp(140px, calc((var(--viewport-h) - 140px) / 2), 600px);
+                --marquee-speed: clamp(45s, calc(35s + 50vw), 85s);
+            }
+
+            .photo-marquee-track {
+                gap: clamp(12px, 2vmin, 20px);
+            }
+        }
+
+        /* Tall/portrait orientation (tablets / tall phones) */
+        @media (aspect-ratio: 9 / 16) {
+            :root {
+                --marquee-photo-size: clamp(110px, calc((var(--viewport-h) - 100px) / 2.2), min(42vmin, 480px));
+                --marquee-speed: clamp(32s, calc(22s + 30vw), 60s);
+            }
+
+            .photo-marquee {
+                padding: clamp(4px, 1vmin, 8px) clamp(6px, 1.5vmin, 12px);
+            }
+        }
+
+        /* Square-ish screens */
+        @media (aspect-ratio: 1 / 1) {
+            :root {
+                --marquee-photo-size: clamp(115px, calc((var(--viewport-h) - 110px) / 2), min(40vmin, 500px));
+                --marquee-speed: clamp(33s, calc(23s + 32vw), 62s);
+            }
         }
         
         /* Extra small mobile (360px and down) */
         @media (max-width: 360px) {
+            .photo-marquee {
+                height: clamp(200px, 38vh, 300px);
+            }
             .section {
                 padding: 10px;
             }
@@ -847,32 +1050,25 @@
     </style>
 </head>
 <body>
+    <!-- Photo marquee background -->
+    <div class="photo-marquee" aria-hidden="true">
+        <div class="photo-marquee-track" id="photoGrid"></div>
+    </div>
+
     <!-- Marquee Banner -->
     <div class="marquee-banner">
-        <div class="marquee-content" id="marqueeContent">
-            ♥ New Year's Eve • ♥ New Year's Day • ♥ EDSA People Power Anniversary • ♥ Maundy Thursday • ♥ Good Friday • ♥ Black Saturday • ♥ Easter Sunday • ♥ Easter Monday • ♥ Araw ng Kagitingan • ♥ Labor Day • ♥ Independence Day • ♥ Feast of the Immaculate Conception • ♥ Christmas Day • ♥ Additional Special Holiday
+        <div class="marquee-track" id="marqueeContent">
+            <div class="marquee-item">♥ New Year's Eve • ♥ New Year's Day • ♥ EDSA People Power Anniversary • ♥ Maundy Thursday • ♥ Good Friday • ♥ Black Saturday • ♥ Easter Sunday • ♥ Easter Monday • ♥ Araw ng Kagitingan • ♥ Labor Day • ♥ Independence Day • ♥ Feast of the Immaculate Conception • ♥ Christmas Day • ♥ Additional Special Holiday</div>
+            <div class="marquee-item" aria-hidden="true">♥ New Year's Eve • ♥ New Year's Day • ♥ EDSA People Power Anniversary • ♥ Maundy Thursday • ♥ Good Friday • ♥ Black Saturday • ♥ Easter Sunday • ♥ Easter Monday • ♥ Araw ng Kagitingan • ♥ Labor Day • ♥ Independence Day • ♥ Feast of the Immaculate Conception • ♥ Christmas Day • ♥ Additional Special Holiday</div>
         </div>
     </div>
 
     <!-- Main Container -->
     <div class="container">
-        <!-- SECTION 1: PHOTO GALLERY -->
-        <div class="section">
-            <div class="section-title">📸 Photo Gallery</div>
-            <div class="photo-gallery">
-                <div class="photo-marquee">
-                    <div class="photo-marquee-track" id="photoGrid"></div>
-                </div>
-                <div class="photo-count">
-                    <span id="photoCount">0</span> / <span id="photoTotal">0</span> photos
-                </div>
-            </div>
-        </div>
-
         <!-- SECTION 2: MUSIC PLAYER -->
-        <div class="section">
+        <div class="section music-section">
             <div class="section-title">🎵 Music Player</div>
-            <div class="music-player-section">
+            <div class="music-player-section music-float-pill">
                 <div class="player-controls">
                     <button class="btn btn-play-pause" id="playPauseBtn">▶ Play</button>
                     <div class="progress-container">
@@ -885,14 +1081,14 @@
                     </div>
                 </div>
             </div>
-            <audio id="audioPlayer" loop>
+            <audio id="audioPlayer" loop preload="none">
                 <source src="The One That Got Away - Katy Perry (Lyrics).mp3" type="audio/mpeg">
             </audio>
             <input type="file" id="musicInput" accept="audio/*" />
         </div>
 
         <!-- SECTION 3: HOLIDAY CALENDAR -->
-        <div class="section">
+        <div class="section calendar-section">
             <div class="section-title">📅 Holiday Calendar</div>
             <div class="calendar-header">
                 <button class="calendar-nav-btn" id="prevMonthBtn">← Prev</button>
@@ -969,26 +1165,45 @@
 
             // Render photos for marquee
             photoGrid.innerHTML = '';
-            photos.forEach(photo => {
-                const item = document.createElement('div');
-                item.className = 'photo-item';
-                const img = document.createElement('img');
-                img.src = photo;
-                item.appendChild(img);
-                photoGrid.appendChild(item);
-            });
 
-            // Duplicate photos for continuous scroll effect
-            photos.forEach(photo => {
-                const item = document.createElement('div');
-                item.className = 'photo-item';
-                const img = document.createElement('img');
-                img.src = photo;
-                item.appendChild(img);
-                photoGrid.appendChild(item);
-            });
+            const createPairEl = (a, b) => {
+                const pair = document.createElement('div');
+                pair.className = 'photo-pair';
 
-            photoCount.textContent = photos.length;
+                const firstItem = document.createElement('div');
+                firstItem.className = 'photo-item';
+                const firstImg = document.createElement('img');
+                firstImg.src = a;
+                firstItem.appendChild(firstImg);
+                pair.appendChild(firstItem);
+
+                const secondItem = document.createElement('div');
+                secondItem.className = 'photo-item';
+                const secondImg = document.createElement('img');
+                secondImg.src = b;
+                secondItem.appendChild(secondImg);
+                pair.appendChild(secondItem);
+
+                return pair;
+            };
+
+            const pairsData = [];
+            for (let i = 0; i < photos.length; i += 2) {
+                const first = photos[i];
+                const second = photos[i + 1] ?? photos[0];
+                if (first && second) pairsData.push([first, second]);
+            }
+
+            // Build 2 identical sequences for seamless infinite scroll.
+            const buildSequence = () => {
+                for (const [a, b] of pairsData) {
+                    photoGrid.appendChild(createPairEl(a, b));
+                }
+            };
+            buildSequence();
+            buildSequence();
+
+            if (photoCount) photoCount.textContent = photos.length;
             if (photoTotal) photoTotal.textContent = photos.length;
         }
 
@@ -1000,12 +1215,12 @@
             const progressFill = document.getElementById('progressFill');
             const currentTimeEl = document.getElementById('currentTime');
             const durationEl = document.getElementById('duration');
-            
-            // Load default music
-            audioPlayer.src = 'The One That Got Away - Katy Perry (Lyrics).mp3';
 
             playPauseBtn.addEventListener('click', () => {
                 if (audioPlayer.paused) {
+                    if (audioPlayer.readyState === 0) {
+                        audioPlayer.load();
+                    }
                     audioPlayer.play();
                     playPauseBtn.textContent = '⏸ Pause';
                 } else {
